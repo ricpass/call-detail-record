@@ -22,22 +22,24 @@ Ensure you include the following in your README.md:
 4. Forbonuspoints,canyoudeployyourworkingapi?(Advanced)
 
 We expect you to treat this project like you’re working as part of a team, and your git ettiequte should reflect this. Email as an attachment or include a link to the git bundled repository showing your commit history with all your commits on the master branch:
+
 `git bundle create tech-test.bundle --all —branches`
 
- 
-Column Description Notes
-caller_id - Phone number of the caller
-recipient - Phone number of the number dialled
-call_date - Date on which the call was made
-end_time - Time when the call ended
-duration - Duration of the call - Seconds
-reference - Unique reference for the call
-currency - for the cost ISO alpha-3
-cost - cost - The billable cost of the call - To 3 decimal places (decipence)
+
+|Column | Description | Notes |
+|-------|-------------|-------|
+|caller_id | Phone number of the caller | |
+|recipient | Phone number of the number dialled ||
+|call_date | Date on which the call was made ||
+|end_time | Time when the call ended ||
+|duration | Duration of the call | Seconds |
+|reference | Unique reference for the call | |
+|currency | for the cost ISO alpha-3 ||
+|cost | The billable cost of the call | To 3 decimal places (decipence) |
 
 ----------------------------------------------------------------
 
-#
+## Idea for contract:
 
 1 - POST /upload
 
@@ -205,26 +207,32 @@ GET /report/
 
 
 ------------------------------------------------
-tables:
+## tables:
 
-call_log
+#### call_log
+```
   caller_id - Phone number of the caller
   recipient - Phone number of the number dialled
   call_date - Date on which the call was made
   end_time - Time when the call ended
   duration - Duration of the call - Seconds
   reference - Unique reference for the call
+```
 
-caller_finance:
+#### caller_finance:
+```
   cost - cost - The billable cost of the call - To 3 decimal places (decipence)
   currency - GBP
   local_cost 
   local_currency - US/EUR
   exchange_rate
+```
 
-exchange_rate
+#### exchange_rate
+```
   local_currency 
   rate
+```
 
 
 
