@@ -52,7 +52,7 @@ response:
 	invalid format
 	currency not supported
 
-502: error
+500: unknown server error
 
 -- import csv file
 
@@ -61,7 +61,7 @@ response:
 2 -
 
 ```
-GET /caller/{callerId}
+GET /caller/{callerId}/report
 	?datetimefrom=xxx
 	&datetimeto=xxx
 ```
@@ -74,13 +74,16 @@ response:
 	    "averageSecondsPercall": 4.2,
 	    "medianSecondsPercall": 4.2,
 	    "longerCallinSeconds": 16.2,
-	    "callVolumeMinute": 75,
-	    "totalCost": 43.245
+	    "callVolume": 75, 
+	    "totalCost": 43.245,
+	    "currency": "GDP"
 	}
 ```
 
 404:
 	callerId unknown
+
+400: dateFrom or dateTo invalid format
 
 --------------------------------------------------
 
@@ -92,13 +95,16 @@ the callerId history
 GET /caller/{callerId}/history
 	?dateFrom=xxx
 	&dateTo=xxx
+	&page=xxx
+	&size=xxx
 ```
 
 response:
 
 200:
 ```
-	[
+{
+	"history": [
 	  {
 		"recipient": "447111111111",
 		"call_date": "2019-07-09",
@@ -111,7 +117,10 @@ response:
 		"end_time": "2019-08-09",
 	  	"duration": 540
 	  }
-	]
+	],
+	"page": 0,
+	"total": 56
+}
 ```
 
 404: 
@@ -119,6 +128,7 @@ response:
 
 400:
 	size limit > 1000
+	dateFrom or dateTo invalid format
 
 --------------------------------------------------
 
@@ -132,6 +142,8 @@ phonenumber can be either caller_id or the recipient
 GET /phonenumber/{phonenumber}/history
 	?dateFrom=xxx
 	&dateTo=xxx
+	&page=xxx
+	&size=xxx
 
 ```
 
@@ -139,7 +151,8 @@ response:
 
 200:
 ```
-	[
+{
+	"history": [
 	  {
 	  	"callerId": "447111111111",
 		"recipient": "447111111111",
@@ -154,7 +167,10 @@ response:
 		"end_time": "2019-08-09",
 	  	"duration": 540
 	  }
-	]
+	],
+	"page": 0,
+	"total": 56
+}
 ```
 
 404:
@@ -162,6 +178,7 @@ response:
 
 400:
 	size limit > 1000
+	dateFrom or dateTo invalid format
 
 
 --------------------------------------------------
@@ -170,7 +187,7 @@ response:
 get a list of calls logs order by X
 
 ```
-GET /report/
+GET /report/{json|csv}
 	?dateFrom=xxx
 	&dateTo=xxx
 	&page=xxx
@@ -211,6 +228,7 @@ GET /report/
 
 #### call_log
 ```
+  id
   caller_id - Phone number of the caller
   recipient - Phone number of the number dialled
   call_date - Date on which the call was made
@@ -221,15 +239,18 @@ GET /report/
 
 #### caller_finance:
 ```
-  cost - cost - The billable cost of the call - To 3 decimal places (decipence)
-  currency - GBP
-  local_cost 
-  local_currency - US/EUR
+  id
+  cost - cost - The billable cost of the call - To 3 decimal places (decipence) - GBP
+  currency (FK)
+  local_cost
+  local_currency - only GBP supported for now.
   exchange_rate
+  call_log.id (FK)
 ```
 
 #### exchange_rate
 ```
+  currency
   local_currency 
   rate
 ```
