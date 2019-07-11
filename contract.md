@@ -190,9 +190,8 @@ GET /report/{json|csv}
   id
   caller_id - Phone number of the caller
   recipient - Phone number of the number dialled
-  call_date - Date on which the call was made
-  end_time - Time when the call ended
-  duration - Duration of the call - Seconds
+  call_start_datetime - Datetime the call started
+  call_end_datetime - Datetime the call ended
   reference - Unique reference for the call
 ```
 
@@ -202,14 +201,13 @@ GET /report/{json|csv}
   cost - cost - The billable cost of the call - To 3 decimal places (decipence) - GBP
   currency (FK)
   local_cost
-  local_currency - only GBP supported for now.
+  local_currency
   exchange_rate
   call_log.id (FK)
 ```
 
 #### exchange_rate
 ```
-  currency
   local_currency 
   rate
 ```
