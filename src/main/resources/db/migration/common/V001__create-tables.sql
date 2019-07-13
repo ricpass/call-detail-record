@@ -13,19 +13,19 @@ create TABLE currency (
 
 create TABLE exchange_rate (
   id VARCHAR(36) PRIMARY KEY,
-  local_currency VARCHAR(3),
+  currency VARCHAR(3),
   rate DOUBLE,
 
-  FOREIGN KEY (local_currency) references currency(id)
+  FOREIGN KEY (currency) references currency(id)
 );
 
-create TABLE caller_finance (
+create TABLE call_finance (
   id VARCHAR(36) PRIMARY KEY,
   cost DOUBLE,
   local_cost DOUBLE,
   local_currency VARCHAR(3),
   exchange_rate DOUBLE,
-  call_log_id VARCHAR(36) NOT NULL,
+  call_log_id VARCHAR(36) NOT NULL UNIQUE,
 
   FOREIGN KEY (local_currency) references currency(id)
 );

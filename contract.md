@@ -1,6 +1,6 @@
 # contract:
 
-1 - POST /upload
+1 - POST /call-details/upload
 
 response:
 
@@ -146,7 +146,7 @@ response:
 get a list of calls logs order by X
 
 ```
-GET /report/{json|csv}
+GET /call-details/report/{json|csv}
 	?dateFrom=xxx
 	&dateTo=xxx
 	&page=xxx
@@ -195,7 +195,7 @@ GET /report/{json|csv}
   reference - Unique reference for the call
 ```
 
-#### caller_finance:
+#### call_finance:
 ```
   id
   cost - cost - The billable cost of the call - To 3 decimal places (decipence) - GBP
