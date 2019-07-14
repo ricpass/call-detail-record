@@ -71,7 +71,7 @@ class CallDetailsImportService {
         } catch (IOException e) {
             throw new FailedReadUploadCallDetails(e);
         } catch (TextParsingException e) {
-            throw new FailedToParseUploadCallDetails(e);
+            throw new FailedToParseUploadCallDetails(e.getLineIndex(), e);
         }
     }
 
