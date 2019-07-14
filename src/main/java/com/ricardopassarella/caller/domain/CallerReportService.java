@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ricardopassarella.common.MathUtils.divide;
-import static com.ricardopassarella.common.MathUtils.getMedian;
+import static com.ricardopassarella.common.MathUtils.median;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +38,7 @@ public class CallerReportService {
                                             .map(CallerDetails::getCost)
                                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal median = getMedian(durations);
+        BigDecimal median = median(durations);
 
         long durationSum = durations.stream()
                                     .mapToLong(Long::longValue)

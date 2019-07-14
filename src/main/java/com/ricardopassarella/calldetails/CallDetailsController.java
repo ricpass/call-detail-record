@@ -6,6 +6,7 @@ import com.ricardopassarella.calldetails.domain.exception.FailedToInsertCallDeta
 import com.ricardopassarella.calldetails.domain.exception.FailedToParseUploadCallDetails;
 import com.ricardopassarella.calldetails.domain.exception.UnknownCurrencyException;
 import com.ricardopassarella.common.ErrorResponse;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @RequestMapping("/call-details")
 @RequiredArgsConstructor
 @Slf4j
+@Api(tags = "Call Details")
 public class CallDetailsController {
 
     private final CallDetailsFacade callDetailsFacade;

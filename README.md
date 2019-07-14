@@ -26,7 +26,11 @@ Run the API: `java -jar build/libs/call-detail-record-1.0.0-SNAPSHOT.jar`
 
 ### Endpoints
 
-Recommendation: Import postman collection [call-detail-record.postman_collection.json](call-detail-record.postman_collection.json) 
+Recommendation:
+
+See Endpoints and try it with Swagger UI at http://localhost:8080/swagger-ui.html 
+ 
+Or import postman collection [call-detail-record.postman_collection.json](call-detail-record.postman_collection.json) 
 
 | Method | Description |
 |--------|-------------|

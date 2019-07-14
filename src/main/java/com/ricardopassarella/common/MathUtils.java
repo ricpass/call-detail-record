@@ -15,7 +15,7 @@ public class MathUtils {
     /*
         Requirements: list is already ordered
      */
-    public static BigDecimal getMedian(List<Long> list) {
+    public static BigDecimal median(List<Long> list) {
         int size = list.size();
 
         BigDecimal value = BigDecimal.valueOf(list.get(size / 2))
