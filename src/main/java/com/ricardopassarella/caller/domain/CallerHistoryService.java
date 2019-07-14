@@ -17,7 +17,7 @@ public class CallerHistoryService {
     private final CallDetailsFacade callDetailsFacade;
 
     PageableResponse<List<CallerHistory>> getCallLogHistory(String callerId, LocalDateTime from, LocalDateTime to, int size, int page) {
-        List<CallerHistory> history = callDetailsFacade.getCallLog(callerId, from, to, size, page)
+        List<CallerHistory> history = callDetailsFacade.getCallLogByCaller(callerId, from, to, size, page)
                                                        .stream()
                                                        .map(callLog -> CallerHistory.builder()
                                                                                     .callStart(callLog.getCallStart())
@@ -26,7 +26,7 @@ public class CallerHistoryService {
                                                                                     .build())
                                                        .collect(Collectors.toList());
 
-        Integer callLogCount = callDetailsFacade.getCallLogCount(callerId, from, to);
+        Integer callLogCount = callDetailsFacade.getCallLogCountByCaller(callerId, from, to);
 
         return new PageableResponse<>(history, callLogCount);
     }

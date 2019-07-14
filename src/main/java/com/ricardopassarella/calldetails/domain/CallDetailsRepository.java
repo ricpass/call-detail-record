@@ -114,7 +114,7 @@ class CallDetailsRepository {
                                                                .build());
     }
 
-    List<CallLog> getCallLog(String callerId, LocalDateTime from, LocalDateTime to, int limit, int offset) {
+    List<CallLog> getCallLogByCaller(String callerId, LocalDateTime from, LocalDateTime to, int limit, int offset) {
         String sql = "select cl.* " +
                      "from call_log cl " +
                      "where cl.caller_id = :callerId " +
@@ -142,7 +142,7 @@ class CallDetailsRepository {
                                                          .build());
     }
 
-    Integer getCountCallLog(String callerId, LocalDateTime from, LocalDateTime to) {
+    Integer getCountCallLogByCaller(String callerId, LocalDateTime from, LocalDateTime to) {
         String sql = "select count(1) as count " +
                      "from call_log cl " +
                      "where cl.caller_id = :callerId " +
@@ -151,6 +151,54 @@ class CallDetailsRepository {
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("callerId", callerId);
+        params.addValue("from", from);
+        params.addValue("to", to);
+
+        return jdbcTemplate.query(sql, params, rs -> {
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+            return 0;
+        });
+    }
+
+    List<CallLog> getCallLogByPhoneNumber(String phoneNumber, LocalDateTime from, LocalDateTime to, int limit, int offset) {
+        String sql = "select cl.* " +
+                     "from call_log cl " +
+                     "where (cl.caller_id = :phoneNumber OR cl.recipient = :phoneNumber)" +
+                     "  and call_end > :from " +
+                     "  and call_end < :to " +
+                     "order by cl.call_end ASC " +
+                     "limit :limit " +
+                     "    offset :offset";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("phoneNumber", phoneNumber);
+        params.addValue("from", from);
+        params.addValue("to", to);
+        params.addValue("limit", limit);
+        params.addValue("offset", offset);
+
+        return jdbcTemplate.query(sql, params,
+                                  (rs, rowNum) -> CallLog.builder()
+                                                         .uuid(rs.getString("id"))
+                                                         .callerId(rs.getString("caller_id"))
+                                                         .recipient(rs.getString("recipient"))
+                                                         .callStart(rs.getObject("call_start", LocalDateTime.class))
+                                                         .callEnd(rs.getObject("call_end", LocalDateTime.class))
+                                                         .reference(rs.getString("reference"))
+                                                         .build());
+    }
+
+    Integer getCountCallLogByPhoneNumber(String phoneNumber, LocalDateTime from, LocalDateTime to) {
+        String sql = "select count(1) as count " +
+                     "from call_log cl " +
+                     "where (cl.caller_id = :phoneNumber OR cl.recipient = :phoneNumber) " +
+                     "  and call_end > :from " +
+                     "  and call_end < :to ";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("phoneNumber", phoneNumber);
         params.addValue("from", from);
         params.addValue("to", to);
 

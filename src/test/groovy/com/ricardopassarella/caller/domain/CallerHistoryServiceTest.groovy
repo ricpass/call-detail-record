@@ -32,8 +32,8 @@ class CallerHistoryServiceTest extends Specification {
             def history = service.getCallLogHistory("123", LocalDateTime.now(), LocalDateTime.now(), 2, 0)
 
         then:
-            1 * callDetailsFacade.getCallLog(_, _, _, _, _) >> callLog
-            1 * callDetailsFacade.getCallLogCount(_, _, _) >> count
+            1 * callDetailsFacade.getCallLogByCaller(_, _, _, _, _) >> callLog
+            1 * callDetailsFacade.getCallLogCountByCaller(_, _, _) >> count
 
         and:
             history == expected

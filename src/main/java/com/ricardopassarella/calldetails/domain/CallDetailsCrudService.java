@@ -21,15 +21,27 @@ class CallDetailsCrudService {
     }
 
     @Transactional(readOnly = true)
-    public List<CallLog> getCallLog(String callerId, LocalDateTime from, LocalDateTime to, int size, int page) {
+    public List<CallLog> getCallLogByCaller(String callerId, LocalDateTime from, LocalDateTime to, int size, int page) {
         int offset = page * size;
 
-        return repository.getCallLog(callerId, from, to, size, offset);
+        return repository.getCallLogByCaller(callerId, from, to, size, offset);
     }
 
     @Transactional(readOnly = true)
-    public Integer getCallLogCount(String callerId, LocalDateTime from, LocalDateTime to) {
-        return repository.getCountCallLog(callerId, from, to);
+    public Integer getCallLogCountByCaller(String callerId, LocalDateTime from, LocalDateTime to) {
+        return repository.getCountCallLogByCaller(callerId, from, to);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CallLog> getCallLogByPhoneNumber(String phoneNumber, LocalDateTime from, LocalDateTime to, int size, int page) {
+        int offset = page * size;
+
+        return repository.getCallLogByPhoneNumber(phoneNumber, from, to, size, offset);
+    }
+
+    @Transactional(readOnly = true)
+    public Integer getCallLogCountByPhoneNumber(String phoneNumber, LocalDateTime from, LocalDateTime to) {
+        return repository.getCountCallLogByPhoneNumber(phoneNumber, from, to);
     }
 
 }

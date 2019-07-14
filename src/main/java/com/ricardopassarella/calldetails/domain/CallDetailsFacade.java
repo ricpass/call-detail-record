@@ -24,11 +24,19 @@ public class CallDetailsFacade {
         return crudService.getCallerDetail(callerId, from, to);
     }
 
-    public List<CallLog> getCallLog(String callerId, LocalDateTime from, LocalDateTime to, int size, int page) {
-        return crudService.getCallLog(callerId, from, to, size, page);
+    public List<CallLog> getCallLogByCaller(String callerId, LocalDateTime from, LocalDateTime to, int size, int page) {
+        return crudService.getCallLogByCaller(callerId, from, to, size, page);
     }
 
-    public Integer getCallLogCount(String callerId, LocalDateTime from, LocalDateTime to) {
-        return crudService.getCallLogCount(callerId, from, to);
+    public Integer getCallLogCountByCaller(String callerId, LocalDateTime from, LocalDateTime to) {
+        return crudService.getCallLogCountByCaller(callerId, from, to);
+    }
+
+    public List<CallLog> getCallLogByPhoneNumber(String phoneNumber, LocalDateTime from, LocalDateTime to, int size, int page) {
+        return crudService.getCallLogByPhoneNumber(phoneNumber, from, to, size, page);
+    }
+
+    public Integer getCallLogCountByPhoneNumber(String phoneNumber, LocalDateTime from, LocalDateTime to) {
+        return crudService.getCallLogCountByPhoneNumber(phoneNumber, from, to);
     }
 }
