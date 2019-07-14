@@ -53,9 +53,9 @@ public class CallDetailsController {
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(value = FailedToInsertCallDetails.class)
-    ErrorResponse handleFailedToInsertCallDetails(Throwable error) {
-        log.debug(error.getMessage(), error);
-        return new ErrorResponse(error.getMessage());
+    ErrorResponse handleFailedToInsertCallDetails(FailedToInsertCallDetails exception) {
+        log.debug(exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
     }
 
     @ResponseStatus(BAD_REQUEST)
