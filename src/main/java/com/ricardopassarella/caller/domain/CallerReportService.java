@@ -1,20 +1,20 @@
 package com.ricardopassarella.caller.domain;
 
 import com.ricardopassarella.calldetails.domain.CallDetailsFacade;
+import com.ricardopassarella.calldetails.dto.CallerDetails;
 import com.ricardopassarella.caller.domain.dto.CallerReportResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.math.RoundingMode.DOWN;
+import static com.ricardopassarella.common.MathUtils.divide;
+import static com.ricardopassarella.common.MathUtils.getMedian;
 
 @Service
 @RequiredArgsConstructor
@@ -29,63 +29,33 @@ public class CallerReportService {
             return Optional.empty();
         }
 
-        List<Pair<Long, BigDecimal>> pairList = callerDetails.stream()
-                                                             .map(details -> {
-                                                                 long duration = ChronoUnit.SECONDS.between(details.getCallStart(), details.getCallEnd());
+        List<Long> durations = callerDetails.stream()
+                                            .map(details -> ChronoUnit.SECONDS.between(details.getCallStart(), details.getCallEnd()))
+                                            .sorted()
+                                            .collect(Collectors.toList());
 
-                                                                 return Pair.of(duration, details.getCost());
-                                                             })
-                                                             .sorted(Comparator.comparing(Pair::getFirst))
-                                                             .collect(Collectors.toList());
+        BigDecimal totalCost = callerDetails.stream()
+                                            .map(CallerDetails::getCost)
+                                            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return Optional.of(createCallerReportResponse(pairList));
-    }
+        BigDecimal median = getMedian(durations);
 
-    private CallerReportResponse createCallerReportResponse(List<Pair<Long, BigDecimal>> pairList) {
-        // TODO move this calculation to another class
-        long sumDuration = 0;
-        long longerCall = 0;
-        BigDecimal sumCost = BigDecimal.ZERO;
+        long durationSum = durations.stream()
+                                    .mapToLong(Long::longValue)
+                                    .sum();
 
-        for (Pair<Long, BigDecimal> details : pairList) {
-            sumDuration += details.getFirst();
-            sumCost = sumCost.add(details.getSecond());
+        BigDecimal averageDurationInSeconds = divide(durationSum, durations.size());
 
-            if (details.getFirst() > longerCall) {
-                longerCall = details.getFirst();
-            }
-        }
+        long longerCall = durations.get(durations.size() - 1);
 
-        int size = pairList.size();
-        BigDecimal averageSeconds = BigDecimal.valueOf(sumDuration)
-                                              .divide(BigDecimal.valueOf(size), 2, DOWN)
-                                              .setScale(2, DOWN);
-        BigDecimal median = getMedian(pairList);
-
-        return CallerReportResponse.builder()
-                                   .averageDurationInSeconds(averageSeconds)
-                                   .callVolume(sumDuration)
-                                   .totalCost(sumCost)
-                                   .medianOfDurationInSeconds(median)
-                                   .longerCallInSeconds(longerCall)
-                                   .currency("GBP")
-                                   .build();
-    }
-
-    private BigDecimal getMedian(List<Pair<Long, BigDecimal>> pairList) {
-        int size = pairList.size();
-
-        BigDecimal value = BigDecimal.valueOf(pairList.get(size / 2)
-                                                      .getFirst())
-                                     .setScale(2, DOWN);
-
-        if (size % 2 == 0) {
-            return value.add(BigDecimal.valueOf(pairList.get(size / 2 - 1)
-                                                        .getFirst()))
-                        .divide(BigDecimal.valueOf(2), 2, DOWN);
-        }
-
-        return value;
+        return Optional.of(CallerReportResponse.builder()
+                                               .averageDurationInSeconds(averageDurationInSeconds)
+                                               .callVolume(durationSum)
+                                               .totalCost(totalCost)
+                                               .medianOfDurationInSeconds(median)
+                                               .longerCallInSeconds(longerCall)
+                                               .currency("GBP")
+                                               .build());
     }
 
 }
