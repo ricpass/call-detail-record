@@ -3,7 +3,7 @@ package com.ricardopassarella.calldetails.domain
 import com.ricardopassarella.calldetails.domain.exception.FailedToParseUploadCallDetails
 import com.ricardopassarella.calldetails.domain.exception.UnknownCurrencyException
 import com.ricardopassarella.calldetails.dto.CallFinanceInsert
-import com.ricardopassarella.calldetails.dto.CallLogInsert
+import com.ricardopassarella.calldetails.dto.CallLog
 import com.ricardopassarella.calldetails.dto.ExchangeRate
 import com.ricardopassarella.infrastructure.csv.CsvConfig
 import org.springframework.mock.web.MockMultipartFile
@@ -41,7 +41,7 @@ class CallDetailsImportServiceTest extends Specification {
                                                                          .exchangeRate(BigDecimal.ONE)
                                                                          .localCurrency("GBP")
                                                                          .build())
-            List<CallLogInsert> callLogs
+            List<CallLog> callLogs
             List<CallFinanceInsert> callerFinances
         when:
             service.parseAndInsertCallDetails(multipartFile)

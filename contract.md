@@ -66,15 +66,13 @@ response:
 	"history": [
 	  {
 		"recipient": "447111111111",
-		"call_date": "2019-07-09",
-		"end_time": "18:34",
-	  	"duration": 540
+		"callStart": "2019-07-09T18:34",
+		"callEnd": "2019-07-09T18:34"
 	  },
 	  {
 		"recipient": "447123123123",
-		"call_date": "2019-07-09",
-		"end_time": "2019-08-09",
-	  	"duration": 540
+		"callStart": "2019-07-09T20:00",
+		"callEnd": "2019-08-09T20:01"
 	  }
 	],
 	"page": 0,

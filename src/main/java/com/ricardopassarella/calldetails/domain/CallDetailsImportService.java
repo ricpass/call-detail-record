@@ -5,7 +5,7 @@ import com.ricardopassarella.calldetails.domain.exception.FailedToParseUploadCal
 import com.ricardopassarella.calldetails.domain.exception.UnknownCurrencyException;
 import com.ricardopassarella.calldetails.dto.CallDetailsUploadRow;
 import com.ricardopassarella.calldetails.dto.CallFinanceInsert;
-import com.ricardopassarella.calldetails.dto.CallLogInsert;
+import com.ricardopassarella.calldetails.dto.CallLog;
 import com.ricardopassarella.calldetails.dto.ExchangeRate;
 import com.univocity.parsers.common.TextParsingException;
 import com.univocity.parsers.csv.CsvRoutines;
@@ -43,13 +43,13 @@ class CallDetailsImportService {
         try {
             InputStream input = multipartFile.getInputStream();
 
-            List<CallLogInsert> callLogs = new ArrayList<>();
+            List<CallLog> callLogs = new ArrayList<>();
             List<CallFinanceInsert> callFinances = new ArrayList<>();
 
             for (CallDetailsUploadRow row : csvRoutines.iterate(CallDetailsUploadRow.class, input, StandardCharsets.UTF_8)) {
                 String callLogId = UUID.randomUUID()
                                        .toString();
-                CallLogInsert callLog = createCallLogInsert(row, callLogId);
+                CallLog callLog = createCallLogInsert(row, callLogId);
                 CallFinanceInsert callFinance = createCallFinanceInsert(row, callLogId);
 
                 callLogs.add(callLog);
@@ -75,18 +75,18 @@ class CallDetailsImportService {
         }
     }
 
-    private CallLogInsert createCallLogInsert(CallDetailsUploadRow row, String callLogId) {
+    private CallLog createCallLogInsert(CallDetailsUploadRow row, String callLogId) {
         LocalDateTime callEnd = LocalDateTime.of(row.getCallDate(), row.getEndTime());
         LocalDateTime callStart = callEnd.minusSeconds(row.getDuration());
 
-        return CallLogInsert.builder()
-                            .uuid(callLogId)
-                            .callerId(row.getCallerId())
-                            .recipient(row.getRecipient())
-                            .callStart(callStart)
-                            .callEnd(callEnd)
-                            .reference(row.getReference())
-                            .build();
+        return CallLog.builder()
+                      .uuid(callLogId)
+                      .callerId(row.getCallerId())
+                      .recipient(row.getRecipient())
+                      .callStart(callStart)
+                      .callEnd(callEnd)
+                      .reference(row.getReference())
+                      .build();
     }
 
     private CallFinanceInsert createCallFinanceInsert(CallDetailsUploadRow row, String callLogId) {

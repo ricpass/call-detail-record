@@ -1,5 +1,6 @@
 package com.ricardopassarella.calldetails.domain;
 
+import com.ricardopassarella.calldetails.dto.CallLog;
 import com.ricardopassarella.calldetails.dto.CallerDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,13 @@ public class CallDetailsFacade {
 
     public List<CallerDetails> getCallerDetail(String callerId, LocalDateTime from, LocalDateTime to) {
         return crudService.getCallerDetail(callerId, from, to);
+    }
+
+    public List<CallLog> getCallLog(String callerId, LocalDateTime from, LocalDateTime to, int size, int page) {
+        return crudService.getCallLog(callerId, from, to, size, page);
+    }
+
+    public Integer getCallLogCount(String callerId, LocalDateTime from, LocalDateTime to) {
+        return crudService.getCallLogCount(callerId, from, to);
     }
 }

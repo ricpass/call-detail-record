@@ -2,7 +2,7 @@ package com.ricardopassarella.calldetails.domain;
 
 import com.ricardopassarella.calldetails.domain.exception.FailedToInsertCallDetails;
 import com.ricardopassarella.calldetails.dto.CallFinanceInsert;
-import com.ricardopassarella.calldetails.dto.CallLogInsert;
+import com.ricardopassarella.calldetails.dto.CallLog;
 import com.ricardopassarella.calldetails.dto.CallerDetails;
 import com.ricardopassarella.calldetails.dto.ExchangeRate;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ class CallDetailsRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    void insertBatch(List<CallLogInsert> callLog, List<CallFinanceInsert> callFinanceInsert) {
+    void insertBatch(List<CallLog> callLog, List<CallFinanceInsert> callFinanceInsert) {
         try {
             insertCallLog(callLog);
             insertCallFinance(callFinanceInsert);
@@ -31,7 +31,7 @@ class CallDetailsRepository {
         }
     }
 
-    private void insertCallLog(List<CallLogInsert> callLogs) {
+    private void insertCallLog(List<CallLog> callLogs) {
         String sql = "insert into call_log " +
                      " (id, caller_id, recipient, call_start, call_end, reference) " +
                      " values " +
@@ -112,5 +112,53 @@ class CallDetailsRepository {
                                                                .callEnd(rs.getObject("call_end", LocalDateTime.class))
                                                                .cost(BigDecimal.valueOf(rs.getDouble("cost")))
                                                                .build());
+    }
+
+    List<CallLog> getCallLog(String callerId, LocalDateTime from, LocalDateTime to, int limit, int offset) {
+        String sql = "select cl.* " +
+                     "from call_log cl " +
+                     "where cl.caller_id = :callerId " +
+                     "  and call_end > :from " +
+                     "  and call_end < :to " +
+                     "order by cl.call_end ASC " +
+                     "limit :limit " +
+                     "    offset :offset";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("callerId", callerId);
+        params.addValue("from", from);
+        params.addValue("to", to);
+        params.addValue("limit", limit);
+        params.addValue("offset", offset);
+
+        return jdbcTemplate.query(sql, params,
+                                  (rs, rowNum) -> CallLog.builder()
+                                                         .uuid(rs.getString("id"))
+                                                         .callerId(rs.getString("caller_id"))
+                                                         .recipient(rs.getString("recipient"))
+                                                         .callStart(rs.getObject("call_start", LocalDateTime.class))
+                                                         .callEnd(rs.getObject("call_end", LocalDateTime.class))
+                                                         .reference(rs.getString("reference"))
+                                                         .build());
+    }
+
+    Integer getCountCallLog(String callerId, LocalDateTime from, LocalDateTime to) {
+        String sql = "select count(1) as count " +
+                     "from call_log cl " +
+                     "where cl.caller_id = :callerId " +
+                     "  and call_end > :from " +
+                     "  and call_end < :to ";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("callerId", callerId);
+        params.addValue("from", from);
+        params.addValue("to", to);
+
+        return jdbcTemplate.query(sql, params, rs -> {
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+            return 0;
+        });
     }
 }
