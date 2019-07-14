@@ -3,6 +3,7 @@ package com.ricardopassarella.calldetails.domain;
 import com.ricardopassarella.calldetails.domain.exception.FailedToInsertCallDetails;
 import com.ricardopassarella.calldetails.dto.CallFinanceInsert;
 import com.ricardopassarella.calldetails.dto.CallLogInsert;
+import com.ricardopassarella.calldetails.dto.CallerDetails;
 import com.ricardopassarella.calldetails.dto.ExchangeRate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -11,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,4 +90,27 @@ class CallDetailsRepository {
         });
     }
 
+    List<CallerDetails> getCallerDetails(String callerId, LocalDateTime from, LocalDateTime to) {
+        String sql = " select " +
+                     "       cl.call_start, " +
+                     "       cl.call_end, " +
+                     "       cf.cost " +
+                     " from call_log cl " +
+                     "         join call_finance cf on cl.id = cf.call_log_id " +
+                     " where caller_id = :callerId" +
+                     "  and call_end > :from " +
+                     "  and call_end < :to ";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("callerId", callerId);
+        params.addValue("from", from);
+        params.addValue("to", to);
+
+        return jdbcTemplate.query(sql, params,
+                                  (rs, rowNum) -> CallerDetails.builder()
+                                                               .callStart(rs.getObject("call_start", LocalDateTime.class))
+                                                               .callEnd(rs.getObject("call_end", LocalDateTime.class))
+                                                               .cost(BigDecimal.valueOf(rs.getDouble("cost")))
+                                                               .build());
+    }
 }
