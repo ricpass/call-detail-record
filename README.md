@@ -41,7 +41,11 @@ Or import postman collection [call-detail-record.postman_collection.json](call-d
 
 ### Assumption
 
-GBP is the API main currency, any other currency is considered local_currency and should have an exchange rate. 
+* I created the /upload endpoint as an example, but I don't think this is the correct approach. Because, if the csv size is in the gigabyte order of magnitude, does not matter 
+how much I optimize, it is still too big and can take hours to process and can still fail. I would take an approach of importing the file to some server or S3, and then I could 
+process in parts and for how long it needs. 
+
+* GBP is the API main currency, any other currency is considered local_currency and should have an exchange rate. 
 
 ### Improvements
 
